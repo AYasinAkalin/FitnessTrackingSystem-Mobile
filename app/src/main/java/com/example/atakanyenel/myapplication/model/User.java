@@ -1,5 +1,8 @@
 package com.example.atakanyenel.myapplication.model;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.io.Serializable;
 
 public class User implements Serializable {
@@ -22,6 +25,18 @@ public class User implements Serializable {
         this.email=email;
         this.name=name;
         this.surname=surname;
+    }
+    public User(JSONArray ja)
+    {
+        try {
+            this.id=ja.getInt(0);
+            this.name=ja.getString(1);
+            this.surname=ja.getString(2);
+            this.email=ja.getString(3);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
     public User()
     {}

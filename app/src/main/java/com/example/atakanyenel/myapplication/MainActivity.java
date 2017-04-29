@@ -1,9 +1,13 @@
 package com.example.atakanyenel.myapplication;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.nfc.Tag;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,7 +17,9 @@ import com.example.atakanyenel.myapplication.model.User;
 import com.example.atakanyenel.myapplication.util.RequestPackage;
 import com.example.atakanyenel.myapplication.util.RestfulAsyncTask;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -39,8 +45,8 @@ public class MainActivity extends AppCompatActivity {
 
                 try {
                     json.accumulate("email",email.getText());
-                     json.accumulate("password",password.getText());
-
+                    json.accumulate("password",password.getText());
+                    
                     System.out.println(json);
                     requestPackage(json);
                 } catch (JSONException e) {
@@ -53,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private void requestPackage(JSONObject json)
     {
 
-        RequestPackage pack=new RequestPackage("http://10.0.2.2:8080/FitnessTraining/WebService/login","POST");
+        RequestPackage pack=new RequestPackage("http://10.0.2.2:5000/ws/login","POST");
             pack.setJsonObject(json);
             RestfulAsyncTask task=new RestfulAsyncTask();
 
@@ -71,11 +77,67 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onPostExecuteListener(String result) {
 
-                    User user=new Gson().fromJson(result,User.class);
-                    System.out.println(user.getName());
-                    Intent i=new Intent(getApplicationContext(), HomeActivity.class);
-                    i.putExtra("user", (Serializable) user);
-                    startActivity(i);
+                    Log.d( "onPostExecuteListener: ",result);
+                    JSONObject json=null;
+                    try {
+                        json=new JSONObject(result);
+                        String resp=json.getString("response");
+                        if (resp.equals("OK"))
+                        {
+                            JSONArray userArray=json.getJSONArray("user");
+                            User user=new User(userArray);
+                            System.out.println(user.getName());
+                            Intent i=new Intent(getApplicationContext(), HomeActivity.class);
+                            i.putExtra("user", (Serializable) user);
+                            startActivity(i);
+                        }
+                        else if(resp.equals("NT"))
+                        {
+                            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+                            alertDialog.setTitle("Fitness Training");
+                            alertDialog.setMessage("You are not a trainer");
+                            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                            alertDialog.show();
+                        }
+                        else if(resp.equals(("NA")))
+                        {
+                            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+                            alertDialog.setTitle("Fitness Training");
+                            alertDialog.setMessage("Not authorized");
+                            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                            alertDialog.show();
+                            }
+
+                        else
+                        {
+
+                            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+                            alertDialog.setTitle("Fitness Training");
+                            alertDialog.setMessage("Unexpected Error");
+                            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                            alertDialog.show();
+
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
                 }
             });
             task.execute(pack);
