@@ -1,48 +1,58 @@
 package com.example.atakanyenel.myapplication;
 
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.drawable.GradientDrawable;
-import android.support.v7.app.AlertDialog;
+
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
-
-import com.example.atakanyenel.myapplication.model.User;
-import com.example.atakanyenel.myapplication.model.Task;
-import com.example.atakanyenel.myapplication.util.RequestPackage;
-import com.example.atakanyenel.myapplication.util.RestfulAsyncTask;
-import com.google.gson.JsonArray;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.util.Arrays.asList;
+import android.support.v7.widget.Toolbar;
 public class HomeActivity extends AppCompatActivity {
 
-    private RecyclerView TaskListView;
+    /*private RecyclerView TaskListView;
     private TextView userName;
     User u;
-    List<Task> tasksList;
+    List<Task> tasksList;*/
+    // Tab başlıkları
+    private String[] tabs = { "Tasks", "Events", "Equipments" };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        TabLayout tabLayout = (TabLayout)findViewById(R.id.tabContainer);
+        tabLayout.addTab(tabLayout.newTab().setText("Tasks"));
+        tabLayout.addTab(tabLayout.newTab().setText("Events"));
+        tabLayout.addTab(tabLayout.newTab().setText("Equipments"));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        final PagerAdapter adapter = new PageAdapter(getSupportFragmentManager(),tabLayout.getTabCount());
+        viewPager.setAdapter(adapter);
+
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        /*
         tasksList=new ArrayList<Task>();
 
 
@@ -54,12 +64,14 @@ public class HomeActivity extends AppCompatActivity {
 
         requestPackage(null);
 
+        */
 
     }
 
 
 
-    private void requestPackage(JSONObject json)
+
+    /*private void requestPackage(JSONObject json)
     {
 
         RequestPackage pack=new RequestPackage("http://10.0.2.2:5000/ws/tasks/"+u.getId(),"GET");
@@ -111,6 +123,6 @@ public class HomeActivity extends AppCompatActivity {
         });
         task.execute(pack);
 
-    }
+    }*/
 
 }
