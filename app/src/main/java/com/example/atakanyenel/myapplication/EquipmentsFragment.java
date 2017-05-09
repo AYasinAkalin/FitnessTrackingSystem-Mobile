@@ -10,12 +10,12 @@ import android.view.ViewGroup;
  * Created by berkedifyeli on 08/05/2017.
  */
 
-public class Events extends Fragment {
+public class EquipmentsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.events,container,false);
+        return inflater.inflate(R.layout.equipments,container,false);
 
     }
 }

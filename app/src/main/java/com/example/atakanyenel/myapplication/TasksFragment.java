@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.atakanyenel.myapplication.model.Task;
 import com.example.atakanyenel.myapplication.model.User;
@@ -26,35 +27,54 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Tasks extends Fragment{
+public class TasksFragment extends Fragment{
 
     private RecyclerView TaskListView;
-    private TextView userName;
-    User u;
+
     List<Task> tasksList;
 
+    public TasksFragment()
+    {
+
+    }
+
+    public static TasksFragment newInstance(User u)
+    {
+        TasksFragment tf=new TasksFragment();
+        Bundle args=new Bundle();
+        args.putSerializable("user",u);
+        tf.setArguments(args);
+
+        return tf;
+    }
     @Override
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.tasks, container, false);
-        /*tasksList=new ArrayList<Task>();
-
+        tasksList=new ArrayList<>();
+/*
 
         u= (User) getActivity().getIntent().getSerializableExtra("user");
         userName=(TextView) getView().findViewById(R.id.userName);
         userName.setText(u.getName()+ " "+u.getSurname());
 
+*/
+        User u=(User)getArguments().getSerializable("user");
+        requestPackage(null,u);
 
-
-        requestPackage(null);*/
+        Log.d("FRAGMENT","task fragment created");
         return rootView;
     }
 
-    private void requestPackage(JSONObject json)
+    public void requestPackage(JSONObject json,User u)
     {
 
         RequestPackage pack=new RequestPackage("http://10.0.2.2:5000/ws/tasks/"+u.getId(),"GET");
+
+
+
         pack.setJsonObject(json);
         RestfulAsyncTask task=new RestfulAsyncTask();
 
