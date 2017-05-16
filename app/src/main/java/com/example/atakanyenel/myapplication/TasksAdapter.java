@@ -1,9 +1,8 @@
 package com.example.atakanyenel.myapplication;
 
 import android.graphics.Color;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +15,6 @@ import com.example.atakanyenel.myapplication.model.Task;
 import com.example.atakanyenel.myapplication.util.RequestPackage;
 import com.example.atakanyenel.myapplication.util.RestfulAsyncTask;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,7 +24,7 @@ import java.util.List;
  * Created by atakanyenel on 18/04/2017.
  */
 
-public class RVAdapter extends RecyclerView.Adapter<RVAdapter.TaskViewHolder> {
+public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHolder> {
 
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
@@ -44,7 +42,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.TaskViewHolder> {
     }
         List<Task> tasks;
 
-        RVAdapter(List<Task> tasks)
+        TasksAdapter(List<Task> tasks)
         {
             this.tasks=tasks;
         }
@@ -76,6 +74,8 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.TaskViewHolder> {
                         try {
                             json.accumulate("link","/ws/task/"+tasks.get(i).getId()+"/complete");
                             requestPackage(json,tvh.btn);
+                            Snackbar.make(v, "You are doing great !!!", Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

@@ -12,8 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.atakanyenel.myapplication.model.Task;
 import com.example.atakanyenel.myapplication.model.User;
@@ -110,7 +108,7 @@ public class TasksFragment extends Fragment{
                 TaskListView=(RecyclerView) getView().findViewById(R.id.list_task);
                 TaskListView.setHasFixedSize(true);
 
-                RVAdapter adapter=new RVAdapter(tasksList);
+                TasksAdapter adapter=new TasksAdapter(tasksList);
                 TaskListView.setAdapter(adapter);
                 RecyclerView.LayoutManager mLayoutManager=new LinearLayoutManager(getActivity().getApplicationContext());
                 TaskListView.setLayoutManager(mLayoutManager);
