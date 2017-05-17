@@ -15,6 +15,15 @@ public class Event {
     private String enddate;
     private String name;
     private int isJoined=0;
+    private int isFull=0;
+
+    public int getIsFull() {
+        return isFull;
+    }
+
+    public void setIsFull(int isFull) {
+        this.isFull = isFull;
+    }
 
     public int getIsJoined() {
         return isJoined;
@@ -64,6 +73,8 @@ public Event(JSONArray ja)
         this.startdate=ja.getString(1);
         this.enddate=ja.getString(2);
         this.name=ja.getString(3);
+        this.isFull=ja.getInt(4);
+        this.isJoined=ja.getInt(5);
     }catch (JSONException e)
     {
         e.printStackTrace();
