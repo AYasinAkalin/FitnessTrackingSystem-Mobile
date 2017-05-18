@@ -55,13 +55,15 @@ public class EventsFragment extends Fragment {
 
         View rootView=inflater.inflate(R.layout.events,container,false);
         eventslist=new ArrayList<>();
-        requestPackage();
+
+    User u=(User)getArguments().getSerializable("user");
+        requestPackage(null,u);
 
     return rootView;
     }
-    public void requestPackage()
+    public void requestPackage(Object o,final User u)
     {
-        RequestPackage pack=new RequestPackage("http://10.0.2.2:5000/ws/events","GET");
+        RequestPackage pack=new RequestPackage("http://10.0.2.2:5000/ws/events/"+u.getId(),"GET");
         pack.setJsonObject(null);
         RestfulAsyncTask task=new RestfulAsyncTask();
         task.setRestfulAsyncTaskListener(new RestfulAsyncTask.OnRestfulAsyncTaskListener() {
@@ -95,7 +97,7 @@ public class EventsFragment extends Fragment {
 
                 EventListView=(RecyclerView) getView().findViewById(R.id.list_event);
                 EventListView.setHasFixedSize(true);
-                EventsAdapter adapter=new EventsAdapter(eventslist);
+                EventsAdapter adapter=new EventsAdapter(eventslist,u);
                 EventListView.setAdapter(adapter);
                 RecyclerView.LayoutManager mLayoutManager=new LinearLayoutManager(getActivity().getApplicationContext());
                 EventListView.setLayoutManager(mLayoutManager);
