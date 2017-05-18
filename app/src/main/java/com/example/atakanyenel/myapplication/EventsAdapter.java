@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.atakanyenel.myapplication.model.Event;
 import com.example.atakanyenel.myapplication.model.Task;
+import com.example.atakanyenel.myapplication.model.User;
 import com.example.atakanyenel.myapplication.util.RequestPackage;
 import com.example.atakanyenel.myapplication.util.RestfulAsyncTask;
 
@@ -42,10 +43,12 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
         }
     }
         List<Event> events;
+    User u;
 
-        EventsAdapter(List<Event> events)
+        EventsAdapter(List<Event> events,User u)
         {
             this.events=events;
+            this.u=u;
         }
 
         public int getItemCount()
@@ -62,33 +65,61 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
         public void onBindViewHolder(final EventViewHolder tvh,final int i)
         {
 
+
+            Log.d( "EVENT FULL",Integer.toString(events.get(i).getIsFull()));
+            Log.d("EVENT JOIN",Integer.toString(events.get(i).getIsJoined()));
+
             tvh.taskTitle.setText(events.get(i).getName());
             tvh.taskdata.setText(events.get(i).getStartdate());
 
-            if (events.get(i).getIsJoined()==0) {
-                tvh.btn.setText("Join");
-                tvh.btn.setBackgroundColor(Color.GREEN);
-                tvh.btn.setOnClickListener(new View.OnClickListener() {
+           if(events.get(i).getIsJoined()==1) { //joined
+
+               tvh.btn.setText("LEAVE");
+               tvh.btn.setBackgroundColor(Color.BLUE);
+           }
+           else if(events.get(i).getIsJoined()==0 && events.get(i).getIsFull()==0) //not joined and there is place in the event
+           {
+                    tvh.btn.setText("JOIN");
+                    tvh.btn.setBackgroundColor(Color.GREEN);
+           }
+           else if(events.get(i).getIsFull()==1)
+           {
+               tvh.btn.setText("FULL");
+               tvh.btn.setBackgroundColor(Color.RED);
+               tvh.btn.setClickable(false);
+           }
+
+                    tvh.btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        JSONObject json=new JSONObject();
-                        try {
-                            json.accumulate("link","/ws/task/"+events.get(i).getId()+"/complete");
-                            requestPackage(json,tvh.btn);
-                            Snackbar.make(v, "You are doing great !!!", Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null).show();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        JSONObject json = new JSONObject();
+                        if (tvh.btn.getText().equals("JOIN")) {
+                            try {
+                                json.accumulate("link", "/ws/events/join/" + events.get(i).getId() + "/" + u.getId());
+                                requestPackage(json, tvh.btn);
+                                Snackbar.make(v, "Joined " + events.get(i).getName(), Snackbar.LENGTH_LONG)
+                                        .setAction("Action", null).show();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
 
+                        }
+                        else
+                        {
+                            try
+                            {
+                                json.accumulate("link","/ws/events/leave/"+events.get(i).getId()+"/"+u.getId());
+                                requestPackage(json,tvh.btn);
+                                Snackbar.make(v,"Left "+events.get(i).getName(),Snackbar.LENGTH_LONG).setAction("Action",null).show();
+
+                            }catch (JSONException e)
+                            {
+                                e.printStackTrace();
+                            }
+
+                        }
                     }
                 });
-            }
-            else {
-                tvh.btn.setText("Leave");
-                tvh.btn.setBackgroundColor(Color.RED);
-
-            }
             }
 
         public void onAttachedRecyclerView(RecyclerView rv)
@@ -125,11 +156,16 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
             @Override
             public void onPostExecuteListener(String result) {
 
-                if (result.equals("OK"))
+                if (result.equals("joined"))
                 {
-                    btn.setBackgroundColor(Color.RED);
-                    btn.setText("Done");
-                    btn.setClickable(false);
+                    btn.setText("LEAVE");
+                    btn.setBackgroundColor(Color.BLUE);
+
+                }
+                if(result.equals("left"))
+                {
+                    btn.setText("JOIN");
+                    btn.setBackgroundColor(Color.GREEN);
                 }
             }
         });
