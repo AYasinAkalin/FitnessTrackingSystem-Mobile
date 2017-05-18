@@ -103,10 +103,10 @@ public class TabbedActivity extends AppCompatActivity {
                     return TasksFragment.newInstance(u);
 
                 case 1:
-                    return new EventsFragment();
+                    return EventsFragment.newInstance(u);
 
                 case 2:
-                    return new EquipmentsFragment();
+                    return EquipmentsFragment.newInstance(u);
 
                 default:
                     return null;
