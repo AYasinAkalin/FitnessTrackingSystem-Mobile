@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.atakanyenel.myapplication.model.Event;
 import com.example.atakanyenel.myapplication.model.User;
@@ -20,6 +21,7 @@ import com.example.atakanyenel.myapplication.util.RestfulAsyncTask;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +32,8 @@ import java.util.List;
 
 public class EventsFragment extends Fragment {
 
+    private TextView title;
+    private TextView number;
     private RecyclerView EventListView;
     List<Event> eventslist;
     public EventsFragment()
@@ -48,7 +52,6 @@ public class EventsFragment extends Fragment {
 
 @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
 
         View rootView=inflater.inflate(R.layout.events,container,false);
         eventslist=new ArrayList<>();
@@ -99,7 +102,11 @@ public class EventsFragment extends Fragment {
                 RecyclerView.ItemDecoration mDividerItemDecoration=new DividerItemDecoration(EventListView.getContext(),DividerItemDecoration.VERTICAL);
                 EventListView.addItemDecoration(mDividerItemDecoration);
 
+                number = (TextView) getView().findViewById(R.id.textNum);
+                number.setText("Number of available events: " + eventslist.size());
 
+                title = (TextView) getView().findViewById(R.id.textAvailable);
+                title.setText("Available Events");
 
             }
         });
